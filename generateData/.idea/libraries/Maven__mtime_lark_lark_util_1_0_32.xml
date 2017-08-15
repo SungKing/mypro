@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: mtime.lark:lark-util:1.0.32">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/mtime/lark/lark-util/1.0.32/lark-util-1.0.32.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/mtime/lark/lark-util/1.0.32/lark-util-1.0.32-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/mtime/lark/lark-util/1.0.32/lark-util-1.0.32-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
