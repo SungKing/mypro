@@ -84,7 +84,7 @@ public class GenerateDao {
                 writer.newLine();
                 writer.write("import mtime.lark.db.jsd.NameStyle;");
                 writer.newLine();
-                writer.write("import java.time.LocalDateTime;");
+                writer.write("import java.time.ZonedDateTime;");
                 writer.newLine();
                 writer.write("import mtime.lark.db.jsd.annotation.JsdTable;");
                 writer.newLine();
@@ -104,7 +104,7 @@ public class GenerateDao {
                     else if (column.getType().contains("int"))
                         writer.write("int ");
                     else if (column.getType().contains("time") || column.getType().contains("date"))
-                        writer.write("LocalDateTime ");
+                        writer.write("ZonedDateTime ");
                     else if (column.getType().contains("char"))
                         writer.write("String ");
                     else if (column.getType().contains("decimal"))
@@ -152,28 +152,12 @@ public class GenerateDao {
                     listGen.append("private ");
                     maxGen.append("private ");
                     minGen.append("private ");
-                    if (column.getType().contains("bigint")) {
-                        listGen.append("List<Long> ");
-                        maxGen.append("Long ");
-                        minGen.append("Long ");
-                    } else if (column.getType().contains("int")) {
-                        listGen.append("List<Integer> ");
-                        maxGen.append("Integer ");
-                        minGen.append("Integer ");
 
-                    } else if (column.getType().contains("time") || column.getType().contains("date")) {
-                        listGen.append("List<LocalDateTime> ");
-                        maxGen.append("LocalDateTime ");
-                        minGen.append("LocalDateTime ");
-                    } else if (column.getType().contains("char")) {
-                        listGen.append("List<String> ");
-                        maxGen.append("String ");
-                        minGen.append("String ");
-                    } else if (column.getType().contains("decimal")) {
-                        listGen.append("List<BigDecimal> ");
-                        maxGen.append("BigDecimal ");
-                        minGen.append("BigDecimal ");
-                    }
+                    String javaType = dbType2JavaType(column.getType());
+                    listGen.append(String.format("List<%s> ",javaType));
+                    maxGen.append(String.format("%s ",javaType));
+                    minGen.append(String.format("%s ",javaType));
+
                     String fieldName = toSmallHump(column.getField());
                     listGen.append(String.format("%s%s;", fieldName, "List"));
                     maxGen.append(String.format("%s%s;", fieldName, "Max"));
@@ -230,7 +214,10 @@ public class GenerateDao {
                     String replace = line.replace("{TableName}", firstToUp(toSmallHump(tableName)))
                             .replace("{table_name}",tableName)
                             .replace("{time}", LocalDateTime.now().toString())
-                            .replace("{author}", System.getProperty("user.name"));
+                            .replace("{author}", System.getProperty("user.name"))
+                            .replace("{pkArgs}",getPkArgs(list))
+                            .replace("{pkFilter}",getPkFilter(list))
+                            ;
 
 
                     if (temepletePath.contains("Impl.java") && replace.contains("{field}")){
@@ -246,6 +233,34 @@ public class GenerateDao {
                 }
             }
         }
+    }
+
+    private static String getPkFilter(List<ColumnTypes> list) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("f");
+        for (ColumnTypes columnTypes : list) {
+            if (columnTypes.getKey() !=null && columnTypes.getKey().equals("PRI")){
+                sb.append(String.format(".add(%s, %s)",columnTypes.getField().toUpperCase(),toSmallHump(columnTypes.getField())));
+            }
+        }
+        sb.append(";");
+        return sb.toString();
+    }
+
+    /**
+     * 获得主键
+     * @param list
+     * @return
+     */
+    private static String getPkArgs(List<ColumnTypes> list) {
+        StringBuilder sb = new StringBuilder();
+        for (ColumnTypes columnTypes : list) {
+            if (columnTypes.getKey() !=null && columnTypes.getKey().equals("PRI")){
+                sb.append(String.format("%s %s,",dbType2JavaType(columnTypes.getType()),toSmallHump(columnTypes.getField())));
+            }
+        }
+        sb.deleteCharAt(sb.length()-1);
+        return sb.toString();
     }
 
     /**
@@ -273,7 +288,7 @@ public class GenerateDao {
             writer.newLine();
             writer.write(String.format("\t\tif (!CollectionUtils.isEmpty(args.get%sList())){",name ) );
             writer.newLine();
-            writer.write(String.format("\t\t\tf.add(%s, FilterType.IN,args.get%sList());",columnTypes.getField().toUpperCase(),name));
+            writer.write(String.format("\t\t\tf.add(%s, FilterType.IN,args.get%sList().toArray(new %s[]{}));",columnTypes.getField().toUpperCase(),name,dbType2JavaType(columnTypes.getType())));
             writer.newLine();
             writer.write("\t\t}else{");
             writer.newLine();
@@ -343,4 +358,19 @@ public class GenerateDao {
         return new String(chars);
     }
 
+    private static String dbType2JavaType(@NonNull String dbType){
+        if (dbType.contains("bigint")) {
+            return "Long";
+        } else if (dbType.contains("int")) {
+            return "Integer";
+
+        } else if (dbType.contains("time") || dbType.contains("date")) {
+            return "ZonedDateTime";
+        } else if (dbType.contains("char")) {
+            return "String";
+        } else if (dbType.contains("decimal")) {
+            return "BigDecimal";
+        }
+        return "Object";
+    }
 }

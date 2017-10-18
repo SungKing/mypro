@@ -1,18 +1,16 @@
 
 
 import mtime.lark.pb.data.PageInfo;
-import mtime.lark.db.jsd.BasicFilter;
-import mtime.lark.db.jsd.Filter;
-import mtime.lark.db.jsd.Shortcut;
-import mtime.lark.db.jsd.UpdateValues;
-import org.springframework.util.StringUtils;
+import mtime.lark.db.jsd.*;
+import org.springframework.stereotype.Repository;
+import org.springframework.util.CollectionUtils;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author {author}
  * @create {time}
  */
+@Repository
 public class {TableName}DaoImpl extends BaseDao implements {TableName}Dao {
 
     private static final String TABLE_NAME = "{table_name}";
@@ -49,13 +47,15 @@ public class {TableName}DaoImpl extends BaseDao implements {TableName}Dao {
     }
 
     @Override
-    public {TableName} getByPK(Map<String, Object> pks) {
-            return DB()
-            .select({TableName}.class)
-            .where(this.buildPKFilter(pks))
-            .page(1,1)
-            .result()
-            .one({TableName}.class);
+    public {TableName} getByPK({pkArgs}) {
+        BasicFilter f = Shortcut.f();
+        {pkFilter}
+        return DB()
+        .select({TableName}.class)
+        .where(f)
+        .page(1,1)
+        .result()
+        .one({TableName}.class);
     }
 
     @Deprecated
@@ -79,10 +79,12 @@ public class {TableName}DaoImpl extends BaseDao implements {TableName}Dao {
     }
 
     @Override
-    public int deleteByPK(Map<String, Object> pks) {
+    public int deleteByPK({pkArgs}) {
+        BasicFilter f = Shortcut.f();
+        {pkFilter}
         return DB()
                 .delete(TABLE_NAME)
-                .where(this.buildPKFilter(pks))
+                .where(f)
                 .result()
                 .getAffectedRows();
     }

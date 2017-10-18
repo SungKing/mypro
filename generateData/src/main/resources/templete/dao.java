@@ -2,7 +2,6 @@
 import mtime.lark.pb.data.PageInfo;
 import mtime.lark.db.jsd.UpdateValues;
 import java.util.List;
-import java.util.Map;
 
 /**
  *
@@ -31,10 +30,10 @@ public interface {TableName}Dao{
     {TableName} get({TableName}Args args);
     /**
      * 通过主键来获取结果
-     * @param pks 主键集合
+     *
      * @return
      */
-    {TableName} getByPK(Map<String, Object> pks);
+    {TableName} getByPK({pkArgs});
     /**
      * 更新数据  这个方法不好，因为现实中的更新是比较复杂的
      * 这个最好自己写一些，或者以后我再想更好的更新
@@ -52,10 +51,10 @@ public interface {TableName}Dao{
     int delete({TableName}Args args);
     /**
      * 按照主键删除
-     * @param pks 主键集合
+     *
      * @return 影响行数
      */
-    int deleteByPK(Map<String, Object> pks);
+    int deleteByPK({pkArgs});
     /**
      * 批量插入
      * @param items 集合
