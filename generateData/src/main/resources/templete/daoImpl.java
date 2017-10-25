@@ -30,7 +30,7 @@ public class {TableName}DaoImpl extends BaseDao implements {TableName}Dao {
     public List<{TableName}> query({TableName}Args args, PageInfo pageInfo) {
         return DB()
                 .select({TableName}.class)
-                .where(Shortcut.f())
+                .where(this.buildFilter(args))
                 .page(pageInfo.getPageIndex(),pageInfo.getPageSize())
                 .result()
                 .all({TableName}.class);
@@ -41,6 +41,7 @@ public class {TableName}DaoImpl extends BaseDao implements {TableName}Dao {
             return DB()
             .select({TableName}.class)
             .where(this.buildFilter(args))
+            .orderBy(Shortcut.s(SortType.DESC,{pkColumns}))
             .page(1,1)
             .result()
             .one({TableName}.class);

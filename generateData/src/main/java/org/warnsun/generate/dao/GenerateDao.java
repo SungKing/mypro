@@ -98,18 +98,7 @@ public class GenerateDao {
                 writer.write(String.format("public class %s {", firstToUp(toSmallHump(tableName))));
                 writer.newLine();
                 for (ColumnTypes column : list) {
-                    writer.write("\tprivate ");
-                    if (column.getType().contains("bigint"))
-                        writer.write("long ");
-                    else if (column.getType().contains("int"))
-                        writer.write("int ");
-                    else if (column.getType().contains("time") || column.getType().contains("date"))
-                        writer.write("ZonedDateTime ");
-                    else if (column.getType().contains("char"))
-                        writer.write("String ");
-                    else if (column.getType().contains("decimal"))
-                        writer.write("BigDecimal ");
-                    writer.write(toSmallHump(column.getField()) + ";");
+                    writer.write(String.format("\tprivate %s %s;",dbType2JavaType(column.getType()),toSmallHump(column.getField())));
                     writer.newLine();
                 }
                 writer.write("}");
@@ -217,6 +206,7 @@ public class GenerateDao {
                             .replace("{author}", System.getProperty("user.name"))
                             .replace("{pkArgs}",getPkArgs(list))
                             .replace("{pkFilter}",getPkFilter(list))
+                            .replace("{pkColumns}",getPkColumns(list))
                             ;
 
 
@@ -233,6 +223,18 @@ public class GenerateDao {
                 }
             }
         }
+    }
+
+    private static String getPkColumns(List<ColumnTypes> list) {
+        StringBuilder sb = new StringBuilder();
+        for (ColumnTypes columnTypes : list) {
+            if (columnTypes.getKey() !=null && columnTypes.getKey().equals("PRI")){
+                sb.append(toSmallHump(columnTypes.getField()).toUpperCase());
+                sb.append(",");
+            }
+        }
+        sb.deleteCharAt(sb.length()-1);
+        return sb.toString();
     }
 
     private static String getPkFilter(List<ColumnTypes> list) {

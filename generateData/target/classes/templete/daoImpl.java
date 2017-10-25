@@ -41,6 +41,7 @@ public class {TableName}DaoImpl extends BaseDao implements {TableName}Dao {
             return DB()
             .select({TableName}.class)
             .where(this.buildFilter(args))
+            .orderBy(Shortcut.s(SortType.DESC,{pkColumns}))
             .page(1,1)
             .result()
             .one({TableName}.class);
