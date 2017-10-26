@@ -229,7 +229,7 @@ public class GenerateDao {
         StringBuilder sb = new StringBuilder();
         for (ColumnTypes columnTypes : list) {
             if (columnTypes.getKey() !=null && columnTypes.getKey().equals("PRI")){
-                sb.append(toSmallHump(columnTypes.getField()).toUpperCase());
+                sb.append(columnTypes.getField().toUpperCase());
                 sb.append(",");
             }
         }
