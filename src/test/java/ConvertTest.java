@@ -12,7 +12,7 @@ import java.time.format.DateTimeFormatter;
 public class ConvertTest {
     @Test
     public void test02(){
-        GenerateClaz.start(PurchaseCostDto.PurchaseCost.class,PurchaseCostDto.PurchaseCostAdjust.class,"D:\\pro\\cmc\\ddd\\mypro\\generateData\\src\\test\\java");
+        //GenerateClaz.start(PurchaseCostDto.PurchaseCost.class,PurchaseCostDto.PurchaseCostAdjust.class,"D:\\pro\\cmc\\ddd\\mypro\\generateData\\src\\test\\java");
     }
     @Test
     public void test03(){
