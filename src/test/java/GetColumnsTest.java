@@ -21,13 +21,29 @@ public class GetColumnsTest {
     }
     @Test
     public void test03(){
-        String url="jdbc:mysql://192.168.50.56:3306/scm_purchase";
+        String url="jdbc:mysql://192.168.50.134:8806/member_mtimeb";
         String user = "mtimeuser";
-        String pwd="mtimeuser0301";
+        String pwd="mtimeuser%^";
         //D:\pro\haiwai\scm-purchase-service\purchase-core\src\main\java\mtime\intl\ec\purchase\core
-        String path = "D:\\pro\\cmc\\ddd\\mypro\\generateData\\src\\main\\java\\mtime\\intl\\ec\\purchase\\core\\dao";
-        String temPath = "D:\\pro\\cmc\\ddd\\mypro\\generateData\\src\\main\\resources\\templete";
+        String path = "/Users/song.wang/java/pro/mypro/mypro/src/main/resources/templete";
+        String temPath = "/Users/song.wang/java/pro/mypro/mypro/src/main/resources/templete";
 
-        GenerateDao.start(url,user,pwd,"fee_detail",path,temPath);
+        GenerateDao.start(url,user,pwd,"festivalevent",path,temPath);
+    }
+
+    @Test
+    public void test04(){
+//        String url="jdbc:mysql://192.168.50.136:8808/mtimeaward?useUnicode=true&characterEncoding=UTF-8";
+//        String user = "mtimeuser";
+//        String pwd="mtimeuser!@#";
+
+        String url="jdbc:mysql://192.168.50.136:8808/mtime?useUnicode=true&characterEncoding=UTF-8";
+        String user = "mtimeuser";
+        String pwd="mtimeuser!@#";
+        //D:\pro\haiwai\scm-purchase-service\purchase-core\src\main\java\mtime\intl\ec\purchase\core
+        String path = "/Users/song.wang/java/pro/mypro/mypro/src/main/resources/templete";
+        String temPath = "/Users/song.wang/java/pro/mypro/mypro/src/main/resources/templete";
+
+        GenerateDao.start(url,user,pwd,"image",path,temPath);
     }
 }

@@ -82,23 +82,28 @@ public class GenerateDao {
             try (BufferedWriter writer = new BufferedWriter(fileWriter)) {
                 writer.write("import lombok.Data;");
                 writer.newLine();
-                writer.write("import mtime.lark.db.jsd.NameStyle;");
+                //writer.write("import mtime.lark.db.jsd.NameStyle;");
                 writer.newLine();
-                writer.write("import java.time.ZonedDateTime;");
+                //writer.write("import java.time.ZonedDateTime;");
+                writer.write("import java.time.LocalDateTime;");
                 writer.newLine();
-                writer.write("import mtime.lark.db.jsd.annotation.JsdTable;");
+                //writer.write("import mtime.lark.db.jsd.annotation.JsdTable;");
                 writer.newLine();
                 writer.newLine();
                 writer.newLine();
 
                 writer.write("@Data");
                 writer.newLine();
-                writer.write("@JsdTable(nameStyle = NameStyle.LOWER)");
+                //writer.write("@JsdTable(nameStyle = NameStyle.LOWER)");
+                writer.newLine();
+                writer.write("@Table(name = \""+tableName+"\")");
                 writer.newLine();
                 writer.write(String.format("public class %s {", firstToUp(toSmallHump(tableName))));
                 writer.newLine();
                 for (ColumnTypes column : list) {
-                    writer.write(String.format("\tprivate %s %s;",dbType2JavaType(column.getType()),toSmallHump(column.getField())));
+                    writer.write(String.format("\t@Column(name = \"%s\")",column.getField()));
+                    writer.newLine();
+                    writer.write(String.format("\tprivate %s %s;",dbType2JavaType(column.getType()), wordFirstUp2SmallHump(column.getField())));
                     writer.newLine();
                 }
                 writer.write("}");
@@ -346,6 +351,48 @@ public class GenerateDao {
         return sb.toString();
     }
 
+    public static String wordFirstUp2SmallHump(@NonNull String name) {
+        char[] chars = name.toCharArray();
+        boolean flag = false;
+        for (int i = 0; i < chars.length; i++) {
+            if (flag){
+                chars[i] = toUp(chars[i]);
+            }else{
+                chars[i] = toSmall(chars[i]);
+            }
+            if (chars[i] == '_') {
+                flag = true;
+                chars[i] = 0;
+            } else{
+                if (i< chars.length-1 && chars[i]>='a' && chars[i]<='z' && chars[i+1] <='Z' && chars[i+1] >='A'){
+                    flag = true;
+                }else
+                    flag = false;
+
+            }
+
+        }
+        String[] split = new String(chars).split(new String(new char[]{0}));
+        StringBuilder sb = new StringBuilder();
+        for (String s : split) {
+            sb.append(s);
+        }
+        return sb.toString();
+    }
+    private static char toSmall(char c){
+        if (c>=65 && c<=90){
+            return (char)(c+32);
+        }
+        return c;
+    }
+    private static char toUp(char c){
+        if (c>=97 && c<=122){
+            return (char)(c-32);
+        }
+        return c;
+    }
+
+
     /**
      * 首字母大写
      *
@@ -367,7 +414,7 @@ public class GenerateDao {
             return "Integer";
 
         } else if (dbType.contains("time") || dbType.contains("date")) {
-            return "ZonedDateTime";
+            return "LocalDateTime";
         } else if (dbType.contains("char")) {
             return "String";
         } else if (dbType.contains("decimal")) {
